@@ -155,7 +155,7 @@ int main()
 			potentialY = parts[partCount].yPos; // потенц У след части змейки
 			potentialDir = parts[partCount].dir; // потенц Направление 
 			timeCounter -= 0.2;
-			
+			parts[0].update();
 			for (int partCount = 1; partCount < 50; partCount++)
 			{
 				parts[partCount].xPos = parts[partCount - 1].predX;
@@ -163,16 +163,14 @@ int main()
 				//parts[partCount].dir = parts[partCount - 1].predDir;
 				parts[partCount].sprite.setPosition(parts[partCount].xPos, parts[partCount].yPos);
 				//parts[partCount].dir = parts[partCount - 1].dir;
+				parts[partCount].dir = parts[partCount - 1].dir;
+				parts[partCount].update();
 			}
-			parts[0].update();
+			//parts[0].update();
 			for (int i = 1; i < 50; i++)
 			{
-				if (i > 1 && parts[i].dir != parts[i].predDir)
-				{
-					parts[i].dir = parts[i].predDir;
-				}
-				//else parts[i].dir = parts[i - 1].dir;
-				parts[i].update();
+				//parts[i].dir = parts[i - 1].dir;
+				//parts[i].update();
 				
 			}
 			
@@ -182,10 +180,10 @@ int main()
 				apple.xPos = (rand() % MAP_WIDTH) * 19;
 				apple.yPos = (rand() % MAP_HEIGHT) * 19;
 				apple.sprite.setPosition(apple.xPos, apple.yPos);
-				parts[partCount].xPos = potentialX;
+				/*parts[partCount].xPos = potentialX;
 				parts[partCount].yPos = potentialY;
 				parts[partCount].sprite.setPosition(parts[partCount].xPos, parts[partCount].yPos);
-				parts[partCount].dir = potentialDir;
+				parts[partCount].dir = potentialDir;*/
 				parts[partCount].draw = 1;
 				
 			}
