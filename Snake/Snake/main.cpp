@@ -6,17 +6,14 @@ using namespace sf;
 
 struct SnakeParts
 {
-	float xPos, yPos, dx = 0, dy = 0;
+	float xPos = 0, yPos = 0, xStore, yStore;
 	int dir = 0;
-	bool draw;
+	bool draw = false;
 	String fileName;
 	Image image;
 	Texture texture;
 	Sprite sprite;
-	int predX = 0;
-	int predY = 0;
-	int predDir;
-	
+
 	SnakeParts()
 	{
 		image.loadFromFile("images/snakePart.png");
@@ -25,29 +22,27 @@ struct SnakeParts
 		sprite.setTextureRect(IntRect(0, 0, 19, 19));
 	}
 
+	void Store()
+	{
+		xStore = xPos;
+		yStore = yPos;
+	}
+
 	void update()
 	{
-		
+		Store();
 		switch (dir)
 		{
-		case 0:	sprite.move(19, 0);
-			predX = xPos;
-			predY = yPos;
+		case 0: sprite.move(19, 0);
 			xPos += 19;
 			break;
 		case 1: sprite.move(-19, 0);
-			predX = xPos;
-			predY = yPos;
 			xPos -= 19;
 			break;
 		case 2: sprite.move(0, 19);
-			predY = yPos;
-			predX = xPos;
 			yPos += 19;
 			break;
 		case 3: sprite.move(0, -19);
-			predY = yPos;
-			predX = xPos;
 			yPos -= 19;
 			break;
 		}
@@ -82,17 +77,16 @@ struct Map
 
 	Map()
 	{
-	    image.loadFromFile("images/map.png");
+		image.loadFromFile("images/map.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 	}
 };
+
 void MapDraw()
 {
-	
-
-	
 }
+
 int main()
 {
 	RenderWindow window(VideoMode(380, 380), "SFML works!");
@@ -100,16 +94,14 @@ int main()
 	Map map;
 	Apple apple;
 	SnakeParts parts[50];
-	int potentialX, potentialY, potentialDir, partCount = 0;
+	int partCount = 0;
 	float timeCounter = 0;
 	parts[0].xPos = 0;
 	parts[0].yPos = 0;
 	parts[0].sprite.setPosition(0, 0);
 	parts[0].draw = true;
-	
-	
 
-	
+
 	while (window.isOpen())
 	{
 		float time = clock.getElapsedTime().asSeconds();
@@ -127,68 +119,48 @@ int main()
 
 		if (Keyboard::isKeyPressed(Keyboard::W))
 		{
-			parts[0].predDir = parts[0].dir;
 			parts[0].dir = 3;
 		}
 
 		if (Keyboard::isKeyPressed(Keyboard::S))
 		{
-			parts[0].predDir = parts[0].dir;
 			parts[0].dir = 2;
 		}
 
 		if (Keyboard::isKeyPressed(Keyboard::A))
 		{
-			parts[0].predDir = parts[0].dir;
 			parts[0].dir = 1;
 		}
 
 		if (Keyboard::isKeyPressed(Keyboard::D))
 		{
-			parts[0].predDir = parts[0].dir;
 			parts[0].dir = 0;
 		}
 
-		if (timeCounter > 0.2)
+		if (timeCounter > 0.1)
 		{
-			potentialX = parts[partCount].xPos; // потенц Х след части змейки
-			potentialY = parts[partCount].yPos; // потенц У след части змейки
-			potentialDir = parts[partCount].dir; // потенц Направление 
-			timeCounter -= 0.2;
+			timeCounter -= 0.1;
+			parts[0].Store();
 			parts[0].update();
-			for (int partCount = 1; partCount < 50; partCount++)
-			{
-				parts[partCount].xPos = parts[partCount - 1].predX;
-				parts[partCount].yPos = parts[partCount - 1].predY;
-				//parts[partCount].dir = parts[partCount - 1].predDir;
-				parts[partCount].sprite.setPosition(parts[partCount].xPos, parts[partCount].yPos);
-				//parts[partCount].dir = parts[partCount - 1].dir;
-				parts[partCount].dir = parts[partCount - 1].dir;
-				parts[partCount].update();
-			}
-			//parts[0].update();
 			for (int i = 1; i < 50; i++)
 			{
-				//parts[i].dir = parts[i - 1].dir;
-				//parts[i].update();
-				
+				if (parts[i].draw == 1)
+				{
+					parts[i].Store();
+					parts[i].xPos = parts[i - 1].xStore;
+					parts[i].yPos = parts[i - 1].yStore;
+					parts[i].sprite.setPosition(parts[i].xPos, parts[i].yPos);
+				}
 			}
-			
-			if(apple.xPos == parts[0].xPos && apple.yPos == parts[0].yPos)
+			if (apple.xPos == parts[0].xPos && apple.yPos == parts[0].yPos)
 			{
 				partCount++;
 				apple.xPos = (rand() % MAP_WIDTH) * 19;
 				apple.yPos = (rand() % MAP_HEIGHT) * 19;
 				apple.sprite.setPosition(apple.xPos, apple.yPos);
-				/*parts[partCount].xPos = potentialX;
-				parts[partCount].yPos = potentialY;
-				parts[partCount].sprite.setPosition(parts[partCount].xPos, parts[partCount].yPos);
-				parts[partCount].dir = potentialDir;*/
-				parts[partCount].draw = 1;
-				
+				parts[partCount].draw = true;
+				parts[partCount].sprite.setPosition(parts[partCount - 1].xStore, parts[partCount - 1].yStore);
 			}
-			
-			
 		}
 
 		window.clear();
@@ -204,7 +176,7 @@ int main()
 			}
 
 		//Snake draw
-		
+
 		for (int i = 0; i < 50; ++i)
 		{
 			if (parts[i].draw == true)
@@ -216,7 +188,7 @@ int main()
 		//Apple draw
 
 		window.draw(apple.sprite);
-		
+
 		window.display();
 	}
 
