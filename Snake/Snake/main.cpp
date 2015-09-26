@@ -94,23 +94,19 @@ struct Map
 	}
 };
 
-void MapDraw()
-{
-}
-
 int main()
 {
-	RenderWindow window(VideoMode(380, 190), "SFML works!");
+	RenderWindow window(VideoMode(380, 190), "Snake");
 	Clock clock;
 	Map map;
 	Apple apple;
-	SnakeParts parts[50];
-	int partCount = 0, missmatch = 0;
+	SnakeParts snake[50];
+	int partCount = 0;
 	float timeCounter = 0;
-	parts[0].xPos = 0;
-	parts[0].yPos = 0;
-	parts[0].sprite.setPosition(0, 0);
-	parts[0].draw = true;
+	snake[0].xPos = 0;
+	snake[0].yPos = 0;
+	snake[0].sprite.setPosition(0, 0);
+	snake[0].draw = true;
 
 
 	while (window.isOpen())
@@ -119,8 +115,6 @@ int main()
 		clock.restart();
 		timeCounter += time;
 
-
-		//printf("%f\n", timeCounter);
 		Event event;
 		while (window.pollEvent(event))
 		{
@@ -128,61 +122,88 @@ int main()
 				window.close();
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::W))
+		if (Keyboard::isKeyPressed(Keyboard::W) && snake[0].dir != 2)
 		{
-			parts[0].dir = 3;
+			snake[0].dir = 3;
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::S))
+		if (Keyboard::isKeyPressed(Keyboard::S) && snake[0].dir != 3)
 		{
-			parts[0].dir = 2;
+			snake[0].dir = 2;
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::A))
+		if (Keyboard::isKeyPressed(Keyboard::A) && snake[0].dir != 0)
 		{
-			parts[0].dir = 1;
+			snake[0].dir = 1;
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::D))
+		if (Keyboard::isKeyPressed(Keyboard::D) && snake[0].dir != 1)
 		{
-			parts[0].dir = 0;
+			snake[0].dir = 0;
 		}
 
 		if (timeCounter > 0.1)
 		{
 			timeCounter -= 0.1;
-			parts[0].Store();
-			parts[0].update();
+
+			//Snake movement
+
+			snake[0].Store();
+
+			if (snake[0].dir == 3 && snake[0].yPos == 0)
+			{
+				snake[0].yPos = (MAP_HEIGHT - 1) * 19;
+				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+			}
+			else if (snake[0].dir == 2 && snake[0].yPos == (MAP_HEIGHT - 1) * 19)
+			{
+				snake[0].yPos = 0;
+				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+			}
+			else if (snake[0].dir == 1 && snake[0].xPos == 0)
+			{
+				snake[0].xPos = (MAP_WIDTH - 1)  * 19;
+				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+			}
+			else if (snake[0].dir == 0 && snake[0].xPos == (MAP_WIDTH - 1) * 19)
+			{
+				snake[0].xPos = 0;
+				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+			}
+			else snake->update();
+
 			for (int i = 1; i < 50; i++)
 			{
-				if (parts[i].draw == 1)
+				if (snake[i].draw == 1)
 				{
-					parts[i].Store();
-					parts[i].xPos = parts[i - 1].xStore;
-					parts[i].yPos = parts[i - 1].yStore;
-					parts[i].sprite.setPosition(parts[i].xPos, parts[i].yPos);
+					snake[i].Store();
+					snake[i].xPos = snake[i - 1].xStore;
+					snake[i].yPos = snake[i - 1].yStore;
+					snake[i].sprite.setPosition(snake[i].xPos, snake[i].yPos);
 				}
 			}
-			if (apple.xPos == parts[0].xPos && apple.yPos == parts[0].yPos)
+
+			//Interact with Apple
+
+			if (apple.xPos == snake[0].xPos && apple.yPos == snake[0].yPos)
 			{
 				partCount++;
-				int partsDrawCounter = 0;
+				int snakeDrawCounter = 0;
 				for (int i = 0; i < 50; i++)
 				{
-					if (parts[i].draw == true)
+					if (snake[i].draw == true)
 					{
-						partsDrawCounter++;
+						snakeDrawCounter++;
 					}
 				}
-				bool safe = true;
 
-				// We make sure that it doesn't spawn on the snake
+				bool safe = true;
 				do
 				{
 					apple.draw();
-					for (int i = 0; i < partsDrawCounter; i++)
+					for (int i = 0; i < snakeDrawCounter; i++)
 					{
-						if (parts[i].xPos == apple.xPos && parts[i].yPos == apple.yPos)
+						if (snake[i].xPos == apple.xPos && snake[i].yPos == apple.yPos)
 						{
 							safe = false;
 							break;
@@ -193,10 +214,11 @@ int main()
 						}
 					}
 				} while (safe != true);
+
 				apple.sprite.setPosition(apple.xPos, apple.yPos);
 
-				parts[partCount].draw = true;
-				parts[partCount].sprite.setPosition(parts[partCount - 1].xStore, parts[partCount - 1].yStore);
+				snake[partCount].draw = true;
+				snake[partCount].sprite.setPosition(snake[partCount - 1].xStore, snake[partCount - 1].yStore);
 			}
 		}
 
@@ -217,9 +239,9 @@ int main()
 
 		for (int i = 0; i < 50; ++i)
 		{
-			if (parts[i].draw == true)
+			if (snake[i].draw == true)
 			{
-				window.draw(parts[i].sprite);
+				window.draw(snake[i].sprite);
 			}
 		}
 
