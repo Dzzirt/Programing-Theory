@@ -102,10 +102,10 @@ int main()
 	Apple apple;
 	SnakeParts snake[50];
 	int partCount = 0;
-	float timeCounter = 0;
-	snake[0].xPos = 0;
-	snake[0].yPos = 0;
-	snake[0].sprite.setPosition(0, 0);
+	float timeCounter = 0, speed = 0.2;
+	snake[0].xPos = 190;
+	snake[0].yPos = 95;
+	snake[0].sprite.setPosition(190, 95);
 	snake[0].draw = true;
 
 
@@ -126,25 +126,22 @@ int main()
 		{
 			snake[0].dir = 3;
 		}
-
-		if (Keyboard::isKeyPressed(Keyboard::S) && snake[0].dir != 3)
+		else if (Keyboard::isKeyPressed(Keyboard::S) && snake[0].dir != 3)
 		{
 			snake[0].dir = 2;
 		}
-
-		if (Keyboard::isKeyPressed(Keyboard::A) && snake[0].dir != 0)
+		else if (Keyboard::isKeyPressed(Keyboard::A) && snake[0].dir != 0)
 		{
 			snake[0].dir = 1;
 		}
-
-		if (Keyboard::isKeyPressed(Keyboard::D) && snake[0].dir != 1)
+		else if (Keyboard::isKeyPressed(Keyboard::D) && snake[0].dir != 1)
 		{
 			snake[0].dir = 0;
 		}
 
-		if (timeCounter > 0.1)
+		if (timeCounter > speed)
 		{
-			timeCounter -= 0.1;
+			timeCounter -= speed;
 
 			//Snake movement
 
@@ -162,7 +159,7 @@ int main()
 			}
 			else if (snake[0].dir == 1 && snake[0].xPos == 0)
 			{
-				snake[0].xPos = (MAP_WIDTH - 1)  * 19;
+				snake[0].xPos = (MAP_WIDTH - 1) * 19;
 				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
 			}
 			else if (snake[0].dir == 0 && snake[0].xPos == (MAP_WIDTH - 1) * 19)
@@ -171,6 +168,35 @@ int main()
 				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
 			}
 			else snake->update();
+
+			try
+			{
+				if (TileMap[snake[0].yPos / 19][snake[0].xPos / 19] == '1')
+				{
+					window.close();
+					break;
+				}
+			}
+			catch (...)
+			{
+			}
+
+			int snakeDrawCounter = 0;
+			for (int i = 0; i < 50; i++)
+			{
+				if (snake[i].draw == true)
+				{
+					snakeDrawCounter++;
+				}
+			}
+			for (int i = 1; i < snakeDrawCounter; i++)
+			{
+				if (snake[i].xPos == snake[0].xPos && snake[i].yPos == snake[0].yPos)
+				{
+					window.close();
+					break;
+				}
+			}
 
 			for (int i = 1; i < 50; i++)
 			{
@@ -187,16 +213,8 @@ int main()
 
 			if (apple.xPos == snake[0].xPos && apple.yPos == snake[0].yPos)
 			{
+				speed -= 0.005;
 				partCount++;
-				int snakeDrawCounter = 0;
-				for (int i = 0; i < 50; i++)
-				{
-					if (snake[i].draw == true)
-					{
-						snakeDrawCounter++;
-					}
-				}
-
 				bool safe = true;
 				do
 				{
@@ -213,7 +231,8 @@ int main()
 							safe = true;
 						}
 					}
-				} while (safe != true);
+				}
+				while (safe != true);
 
 				apple.sprite.setPosition(apple.xPos, apple.yPos);
 
