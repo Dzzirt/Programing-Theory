@@ -6,7 +6,7 @@ using namespace sf;
 
 struct SnakeParts
 {
-	float xPos = 0, yPos = 0, xStore, yStore;
+	int xPos = 0, yPos = 0, xStore, yStore;
 	int dir = 0;
 	bool draw = false;
 	String fileName;
@@ -51,7 +51,7 @@ struct SnakeParts
 
 struct Apple
 {
-	float xPos, yPos;
+	int xPos, yPos;
 	String fileName;
 	Image image;
 	Texture texture;
@@ -59,13 +59,24 @@ struct Apple
 
 	Apple()
 	{
-		xPos = (rand() % MAP_WIDTH) * 19;
-		yPos = (rand() % MAP_HEIGHT) * 19;
+		draw();
+		sprite.setPosition(xPos, yPos);
 		image.loadFromFile("images/apple.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, 19, 19));
-		sprite.setPosition(xPos, yPos);
+	}
+
+	void draw()
+	{
+		xPos = (rand() % MAP_WIDTH) * 19;
+		yPos = (rand() % MAP_HEIGHT) * 19;
+		printf("%d  %d \n", xPos, yPos);
+		while (TileMap[yPos / 19][xPos / 19] != ' ')
+		{
+			xPos = (rand() % MAP_WIDTH) * 19;
+			yPos = (rand() % MAP_HEIGHT) * 19;
+		}
 	}
 };
 
@@ -89,12 +100,12 @@ void MapDraw()
 
 int main()
 {
-	RenderWindow window(VideoMode(380, 380), "SFML works!");
+	RenderWindow window(VideoMode(380, 190), "SFML works!");
 	Clock clock;
 	Map map;
 	Apple apple;
 	SnakeParts parts[50];
-	int partCount = 0;
+	int partCount = 0, missmatch = 0;
 	float timeCounter = 0;
 	parts[0].xPos = 0;
 	parts[0].yPos = 0;
@@ -109,7 +120,7 @@ int main()
 		timeCounter += time;
 
 
-		printf("%f\n", timeCounter);
+		//printf("%f\n", timeCounter);
 		Event event;
 		while (window.pollEvent(event))
 		{
@@ -155,9 +166,35 @@ int main()
 			if (apple.xPos == parts[0].xPos && apple.yPos == parts[0].yPos)
 			{
 				partCount++;
-				apple.xPos = (rand() % MAP_WIDTH) * 19;
-				apple.yPos = (rand() % MAP_HEIGHT) * 19;
+				int partsDrawCounter = 0;
+				for (int i = 0; i < 50; i++)
+				{
+					if (parts[i].draw == true)
+					{
+						partsDrawCounter++;
+					}
+				}
+				bool safe = true;
+
+				// We make sure that it doesn't spawn on the snake
+				do
+				{
+					apple.draw();
+					for (int i = 0; i < partsDrawCounter; i++)
+					{
+						if (parts[i].xPos == apple.xPos && parts[i].yPos == apple.yPos)
+						{
+							safe = false;
+							break;
+						}
+						else
+						{
+							safe = true;
+						}
+					}
+				} while (safe != true);
 				apple.sprite.setPosition(apple.xPos, apple.yPos);
+
 				parts[partCount].draw = true;
 				parts[partCount].sprite.setPosition(parts[partCount - 1].xStore, parts[partCount - 1].yStore);
 			}
@@ -165,12 +202,13 @@ int main()
 
 		window.clear();
 
-		//MAP draw
+		//Map draw
 
 		for (int i = 0; i < MAP_HEIGHT; i++)
 			for (int j = 0; j < MAP_WIDTH; j++)
 			{
 				if (TileMap[i][j] == ' ') map.sprite.setTextureRect(IntRect(0, 0, 19, 19));
+				if (TileMap[i][j] == '1') map.sprite.setTextureRect(IntRect(19, 0, 19, 19));
 				map.sprite.setPosition(j * 19, i * 19);
 				window.draw(map.sprite);
 			}
