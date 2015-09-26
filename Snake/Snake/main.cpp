@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "map.h"
+#include <sstream>
 using namespace sf;
 
 
@@ -71,7 +72,6 @@ struct Apple
 	{
 		xPos = (rand() % MAP_WIDTH) * 19;
 		yPos = (rand() % MAP_HEIGHT) * 19;
-		printf("%d  %d \n", xPos, yPos);
 		while (TileMap[yPos / 19][xPos / 19] != ' ')
 		{
 			xPos = (rand() % MAP_WIDTH) * 19;
@@ -101,8 +101,18 @@ int main()
 	Map map;
 	Apple apple;
 	SnakeParts snake[50];
+	Font font;
+	std::ostringstream playerScoreString;
+	font.loadFromFile("font/font.otf");
+	Text text("", font, 80);
+	Color color(155, 89, 182);
+	text.setColor(color);
+	
+
+	int score = 0;
 	int partCount = 0;
 	float timeCounter = 0, speed = 0.2;
+	bool pause = false;
 	snake[0].xPos = 190;
 	snake[0].yPos = 95;
 	snake[0].sprite.setPosition(190, 95);
@@ -138,137 +148,182 @@ int main()
 		{
 			snake[0].dir = 0;
 		}
-
-		if (timeCounter > speed)
+		if (Keyboard::isKeyPressed(Keyboard::P))
 		{
-			timeCounter -= speed;
+			pause = true;
+		}
+		if (Keyboard::isKeyPressed(Keyboard::U))
+		{
+			pause = false;
+		}
+		if (!pause)
+		{
+			if (timeCounter > speed)
+			{
+				timeCounter = 0;
 
-			//Snake movement
+				//Snake movement
 
-			snake[0].Store();
+				snake[0].Store();
 
-			if (snake[0].dir == 3 && snake[0].yPos == 0)
-			{
-				snake[0].yPos = (MAP_HEIGHT - 1) * 19;
-				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
-			}
-			else if (snake[0].dir == 2 && snake[0].yPos == (MAP_HEIGHT - 1) * 19)
-			{
-				snake[0].yPos = 0;
-				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
-			}
-			else if (snake[0].dir == 1 && snake[0].xPos == 0)
-			{
-				snake[0].xPos = (MAP_WIDTH - 1) * 19;
-				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
-			}
-			else if (snake[0].dir == 0 && snake[0].xPos == (MAP_WIDTH - 1) * 19)
-			{
-				snake[0].xPos = 0;
-				snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
-			}
-			else snake->update();
-
-			try
-			{
-				if (TileMap[snake[0].yPos / 19][snake[0].xPos / 19] == '1')
+				if (snake[0].dir == 3 && snake[0].yPos == 0)
 				{
-					window.close();
-					break;
+					snake[0].yPos = (MAP_HEIGHT - 1) * 19;
+					snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+				}
+				else if (snake[0].dir == 2 && snake[0].yPos == (MAP_HEIGHT - 1) * 19)
+				{
+					snake[0].yPos = 0;
+					snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+				}
+				else if (snake[0].dir == 1 && snake[0].xPos == 0)
+				{
+					snake[0].xPos = (MAP_WIDTH - 1) * 19;
+					snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+				}
+				else if (snake[0].dir == 0 && snake[0].xPos == (MAP_WIDTH - 1) * 19)
+				{
+					snake[0].xPos = 0;
+					snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+				}
+				else snake->update();
+
+				try
+				{
+					if (TileMap[snake[0].yPos / 19][snake[0].xPos / 19] == '1')
+					{
+						window.clear();
+						playerScoreString << score;
+						text.setString("Score: " + playerScoreString.str());
+						text.setPosition(14, 28);
+						window.draw(text);
+						window.display();
+						sleep(seconds(4));
+						break;
+					}
+				}
+				catch (...)
+				{
+				}
+
+				int snakeDrawCounter = 0;
+				for (int i = 0; i < 50; i++)
+				{
+					if (snake[i].draw == true)
+					{
+						snakeDrawCounter++;
+					}
+				}
+				for (int i = 1; i < snakeDrawCounter; i++)
+				{
+					if (snake[i].xPos == snake[0].xPos && snake[i].yPos == snake[0].yPos)
+					{
+						window.clear();
+						playerScoreString << score;
+						text.setString("Score: " + playerScoreString.str());
+						text.setPosition(14, 28);
+						window.draw(text);
+						window.display();
+						sleep(seconds(4));
+						window.close();
+						break;
+					}
+				}
+
+				for (int i = 1; i < 50; i++)
+				{
+					if (snake[i].draw == 1)
+					{
+						snake[i].Store();
+						snake[i].xPos = snake[i - 1].xStore;
+						snake[i].yPos = snake[i - 1].yStore;
+						snake[i].sprite.setPosition(snake[i].xPos, snake[i].yPos);
+					}
+				}
+
+				//Interact with Apple
+
+				if (apple.xPos == snake[0].xPos && apple.yPos == snake[0].yPos)
+				{
+					score += 9;
+					speed -= 0.005;
+					partCount++;
+					bool safe = true;
+					do
+					{
+						apple.draw();
+						for (int i = 0; i < snakeDrawCounter; i++)
+						{
+							if (snake[i].xPos == apple.xPos && snake[i].yPos == apple.yPos)
+							{
+								safe = false;
+								break;
+							}
+							else
+							{
+								safe = true;
+							}
+						}
+					} while (safe != true);
+
+					apple.sprite.setPosition(apple.xPos, apple.yPos);
+
+					snake[partCount].draw = true;
+					snake[partCount].sprite.setPosition(snake[partCount - 1].xStore, snake[partCount - 1].yStore);
 				}
 			}
-			catch (...)
-			{
-			}
+			window.clear();
 
-			int snakeDrawCounter = 0;
-			for (int i = 0; i < 50; i++)
+			//Map draw
+
+			for (int i = 0; i < MAP_HEIGHT; i++)
+				for (int j = 0; j < MAP_WIDTH; j++)
+				{
+					if (TileMap[i][j] == ' ') map.sprite.setTextureRect(IntRect(0, 0, 19, 19));
+					if (TileMap[i][j] == '1') map.sprite.setTextureRect(IntRect(19, 0, 19, 19));
+					map.sprite.setPosition(j * 19, i * 19);
+					window.draw(map.sprite);
+				}
+
+			//Snake draw
+
+			for (int i = 0; i < 50; ++i)
 			{
 				if (snake[i].draw == true)
 				{
-					snakeDrawCounter++;
-				}
-			}
-			for (int i = 1; i < snakeDrawCounter; i++)
-			{
-				if (snake[i].xPos == snake[0].xPos && snake[i].yPos == snake[0].yPos)
-				{
-					window.close();
-					break;
+					window.draw(snake[i].sprite);
 				}
 			}
 
-			for (int i = 1; i < 50; i++)
-			{
-				if (snake[i].draw == 1)
-				{
-					snake[i].Store();
-					snake[i].xPos = snake[i - 1].xStore;
-					snake[i].yPos = snake[i - 1].yStore;
-					snake[i].sprite.setPosition(snake[i].xPos, snake[i].yPos);
-				}
-			}
+			//Apple draw
 
-			//Interact with Apple
+			window.draw(apple.sprite);
 
-			if (apple.xPos == snake[0].xPos && apple.yPos == snake[0].yPos)
-			{
-				speed -= 0.005;
-				partCount++;
-				bool safe = true;
-				do
-				{
-					apple.draw();
-					for (int i = 0; i < snakeDrawCounter; i++)
-					{
-						if (snake[i].xPos == apple.xPos && snake[i].yPos == apple.yPos)
-						{
-							safe = false;
-							break;
-						}
-						else
-						{
-							safe = true;
-						}
-					}
-				}
-				while (safe != true);
-
-				apple.sprite.setPosition(apple.xPos, apple.yPos);
-
-				snake[partCount].draw = true;
-				snake[partCount].sprite.setPosition(snake[partCount - 1].xStore, snake[partCount - 1].yStore);
-			}
+			window.display();
 		}
-
-		window.clear();
-
-		//Map draw
-
-		for (int i = 0; i < MAP_HEIGHT; i++)
-			for (int j = 0; j < MAP_WIDTH; j++)
-			{
-				if (TileMap[i][j] == ' ') map.sprite.setTextureRect(IntRect(0, 0, 19, 19));
-				if (TileMap[i][j] == '1') map.sprite.setTextureRect(IntRect(19, 0, 19, 19));
-				map.sprite.setPosition(j * 19, i * 19);
-				window.draw(map.sprite);
-			}
-
-		//Snake draw
-
-		for (int i = 0; i < 50; ++i)
+		else
 		{
-			if (snake[i].draw == true)
-			{
-				window.draw(snake[i].sprite);
-			}
+			window.clear();
+			
+			//Map draw
+
+			for (int i = 0; i < MAP_HEIGHT; i++)
+				for (int j = 0; j < MAP_WIDTH; j++)
+				{
+					if (TileMap[i][j] == ' ') map.sprite.setTextureRect(IntRect(0, 0, 19, 19));
+					if (TileMap[i][j] == '1') map.sprite.setTextureRect(IntRect(19, 0, 19, 19));
+					map.sprite.setPosition(j * 19, i * 19);
+					window.draw(map.sprite);
+				}
+			
+			window.display();
+			
 		}
 
-		//Apple draw
+		
+		
 
-		window.draw(apple.sprite);
-
-		window.display();
+		
 	}
 
 	return 0;
