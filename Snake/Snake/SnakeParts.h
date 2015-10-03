@@ -1,11 +1,13 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+using namespace sf;
 
 struct SnakeParts;
 
 
 struct SnakeParts
 {
-	int xPos = 0, yPos = 0, xStore, yStore;
+	float xPos = 0.f, yPos = 0.f, xStore, yStore;
 	int dir = 0;
 	bool draw = false;
 	String fileName;

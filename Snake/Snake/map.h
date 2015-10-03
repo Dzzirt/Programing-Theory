@@ -1,7 +1,7 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+using namespace sf;
 
-const int MAP_HEIGHT = 10;
-const int MAP_WIDTH = 20;
 struct Map;
 
 struct Map
@@ -18,15 +18,3 @@ struct Map
 	}
 };
 
-String TileMap[MAP_HEIGHT] = {
-	"     1111111111     ",
-	"                    ",
-	"                    ",
-	"1                  1",
-	"1                  1",
-	"1                  1",
-	"1                  1",
-	"                    ",
-	"                    ",
-	"     1111111111     "
-};

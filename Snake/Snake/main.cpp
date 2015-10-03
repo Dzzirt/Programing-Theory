@@ -1,10 +1,12 @@
-#include "Headers.h"
-#include "fields.h"
+#include "methods.h"
+
 
 int main()
 {
 	textInit();
 	headInit();
-	GameStart();
+	gameStart();
 	return 0;
 }
+
+

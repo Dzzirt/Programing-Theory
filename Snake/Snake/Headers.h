@@ -1,16 +1,16 @@
-#pragma once
-
 #include <SFML/Graphics.hpp>
-
 using namespace sf;
-
-#include <sstream>
+//include "structs.h"
 
 #include "map.h"
-
 #include "apple.h"
-
 #include "SnakeParts.h"
+#include <sstream>
+#include "mainConst.h"
+
+
+
+
 
 
 

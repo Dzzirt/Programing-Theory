@@ -1,6 +1,5 @@
 #pragma once
-
-
+#include "mapConst.h"
 
 struct Apple;
 
@@ -8,7 +7,7 @@ struct Apple;
 
 struct Apple
 {
-	int xPos, yPos;
+	float xPos, yPos;
 	String fileName;
 	Image image;
 	Texture texture;
@@ -26,12 +25,12 @@ struct Apple
 
 	void draw()
 	{
-		xPos = (rand() % MAP_WIDTH) * 19;
-		yPos = (rand() % MAP_HEIGHT) * 19;
-		while (TileMap[yPos / 19][xPos / 19] != ' ')
+		xPos = (rand() % MAP_WIDTH) * 19.f;
+		yPos = (rand() % MAP_HEIGHT) * 19.f;
+		while (TileMap[(int)(yPos / 19)][(int)(xPos / 19)] != ' ')
 		{
-			xPos = (rand() % MAP_WIDTH) * 19;
-			yPos = (rand() % MAP_HEIGHT) * 19;
+			xPos = (rand() % MAP_WIDTH) * 19.f;
+			yPos = (rand() % MAP_HEIGHT) * 19.f;
 		}
 	}
 };
