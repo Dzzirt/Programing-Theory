@@ -218,7 +218,40 @@ void render(RenderWindow& window)
 
 	window.draw(apple->sprite);
 }
+void processCollisions(int snakeDrawCounter)
+{
+	//Collision with Walls
 
+	try
+	{
+		if (TileMap[(int)(snake[0].yPos / 19)][(int)(snake[0].xPos / 19)] == '1')
+		{
+			state = ENDGAME;
+		}
+	}
+	catch (...)
+	{
+	}
+
+	//Collision with itself
+
+	for (int i = 1; i < snakeDrawCounter; i++)
+	{
+		if (snake[i].xPos == snake[0].xPos && snake[i].yPos == snake[0].yPos)
+		{
+			state = ENDGAME;
+		}
+	}
+
+
+	//Interact with Apple
+
+	if (apple->xPos == snake[0].xPos && apple->yPos == snake[0].yPos)
+	{
+		eatApple(snakeDrawCounter);
+		appleSpawn(snakeDrawCounter, *apple);
+	}
+}
 void gameStart()
 {
 	RenderWindow window(VideoMode(380, 190), "Snake");
@@ -237,21 +270,20 @@ void gameStart()
 			title.setString("       Snake!\nPress 'U' to start!");
 			title.setPosition(4, 10);
 			window.draw(title);
-			window.display();
+
 		}
 
 		if (state == PAUSE)
 		{
 			window.clear();
 
-			//Map draw
 
 			render(window);
 
 			title.setString("Pause");
 			title.setPosition(122, 50);
 			window.draw(title);
-			window.display();
+		
 		}
 
 		if (state == PLAY)
@@ -266,40 +298,10 @@ void gameStart()
 
 				int snakeDrawCounter = snakeLength();
 
-				//Collision with Walls
-
-				try
-				{
-					if (TileMap[(int)(snake[0].yPos / 19)][(int)(snake[0].xPos / 19)] == '1')
-					{
-						state = ENDGAME;
-					}
-				}
-				catch (...)
-				{
-				}
-
-				//Collision with itself
-
-				for (int i = 1; i < snakeDrawCounter; i++)
-				{
-					if (snake[i].xPos == snake[0].xPos && snake[i].yPos == snake[0].yPos)
-					{
-						state = ENDGAME;
-					}
-				}
-
-
-				//Interact with Apple
-
-				if (apple->xPos == snake[0].xPos && apple->yPos == snake[0].yPos)
-				{
-					eatApple(snakeDrawCounter);
-					appleSpawn(snakeDrawCounter, *apple);
-				}
+				processCollisions(snakeDrawCounter);
 			}
 			render(window);
-			window.display();
+			
 		}
 
 		if (state == ENDGAME)
@@ -308,8 +310,9 @@ void gameStart()
 			text.setString(" Score: " + toString(score) + "\n Press 'Esc' to exit\n Press 'R' to restart");
 			text.setPosition(14, 28);
 			window.draw(text);
-			window.display();
+			
 		}
+		window.display();
 	}
 	deleteAll();
 }

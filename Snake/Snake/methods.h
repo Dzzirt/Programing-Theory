@@ -8,6 +8,7 @@ void headInit();
 void textInit();
 void processEvents(sf::RenderWindow &window);
 int snakeLength();
+void processCollisions(int snakeDrawCounter);
 void step();
 void eatApple(int snakeDrawCounter);
 void appleSpawn(int snakeDrawCounter, Apple & apple);
