@@ -27,7 +27,7 @@ void deleteAll()
 	delete[] snake;
 }
 
-void appleSpawn(int snakeDrawCounter, Apple& apple)
+void appleSpawn(int snakeDrawCounter, Apple & apple)
 {
 	bool safe = true;
 	do
@@ -107,7 +107,7 @@ void step()
 	}
 }
 
-void processEvents(RenderWindow& window)
+void processEvents(RenderWindow & window)
 {
 	Event event;
 	while (window.pollEvent(event))
@@ -189,7 +189,7 @@ void textInit()
 	title.setStyle(Text::Bold);
 }
 
-void render(RenderWindow& window)
+void render(RenderWindow & window)
 {
 	window.clear();
 
@@ -218,6 +218,7 @@ void render(RenderWindow& window)
 
 	window.draw(apple->sprite);
 }
+
 void processCollisions(int snakeDrawCounter)
 {
 	//Collision with Walls
@@ -252,6 +253,7 @@ void processCollisions(int snakeDrawCounter)
 		appleSpawn(snakeDrawCounter, *apple);
 	}
 }
+
 void gameStart()
 {
 	RenderWindow window(VideoMode(380, 190), "Snake");
@@ -276,10 +278,7 @@ void gameStart()
 		if (state == PAUSE)
 		{
 			window.clear();
-
-
 			render(window);
-
 			title.setString("Pause");
 			title.setPosition(122, 50);
 			window.draw(title);
@@ -312,6 +311,7 @@ void gameStart()
 			window.draw(text);
 			
 		}
+
 		window.display();
 	}
 	deleteAll();

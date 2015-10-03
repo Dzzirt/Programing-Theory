@@ -6,7 +6,7 @@ void gameStart();
 void reinitAll();
 void headInit();
 void textInit();
-void processEvents(sf::RenderWindow &window);
+void processEvents(sf::RenderWindow & window);
 int snakeLength();
 void processCollisions(int snakeDrawCounter);
 void step();
