@@ -1,5 +1,7 @@
+#pragma once
 #include "methods.h"
-#include "Headers.h"
+#include "mainConst.h"
+#include "sstream"
 
 
 std::string toString(int val)
@@ -12,8 +14,11 @@ std::string toString(int val)
 void reinitAll()
 {
 	map = new Map();
+	mapInit(map);
 	apple = new Apple();
+	appleInit(apple);
 	snake = new SnakeParts[50];
+	snakeInit(snake);
 	headInit();
 	score = 0;
 	timeCounter = 0.f;
@@ -27,15 +32,15 @@ void deleteAll()
 	delete[] snake;
 }
 
-void appleSpawn(int snakeDrawCounter, Apple & apple)
+void appleSpawn(int snakeDrawCounter, Apple * apple)
 {
 	bool safe = true;
 	do
 	{
-		apple.draw();
+		appleDraw(apple);
 		for (int i = 0; i < snakeDrawCounter; i++)
 		{
-			if (snake[i].xPos == apple.xPos && snake[i].yPos == apple.yPos)
+			if (snake[i].xPos == apple->xPos && snake[i].yPos == apple->yPos)
 			{
 				safe = false;
 				break;
@@ -45,7 +50,7 @@ void appleSpawn(int snakeDrawCounter, Apple & apple)
 	}
 	while (safe != true);
 
-	apple.sprite.setPosition(apple.xPos, apple.yPos);
+	apple->sprite.setPosition(apple->xPos, apple->yPos);
 }
 
 void eatApple(int snakeDrawCounter)
@@ -56,7 +61,7 @@ void eatApple(int snakeDrawCounter)
 	snake[snakeDrawCounter].sprite.setPosition(snake[snakeDrawCounter - 1].xStore, snake[snakeDrawCounter - 1].yStore);
 }
 
-int snakeLength()
+int snakeLength(SnakeParts * snake)
 {
 	int snakeDrawCounter = 0;
 	for (int i = 0; i < 50; i++)
@@ -71,9 +76,9 @@ int snakeLength()
 
 void step()
 {
-	snake[0].Store();
+	storeXY(snake);
 
-	if (snake[0].dir == 3 && snake[0].yPos == 0)
+	if ((snake[0].dir == 3) && (snake[0].yPos == 0))
 	{
 		snake[0].yPos = (MAP_HEIGHT - 1) * 19;
 		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
@@ -93,13 +98,13 @@ void step()
 		snake[0].xPos = 0;
 		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
 	}
-	else snake[0].update();
+	else snakeUpdate(snake);
 
 	for (int i = 1; i < 50; i++)
 	{
 		if (snake[i].draw == 1)
 		{
-			snake[i].Store();
+			storeXY(snake + i);
 			snake[i].xPos = snake[i - 1].xStore;
 			snake[i].yPos = snake[i - 1].yStore;
 			snake[i].sprite.setPosition(snake[i].xPos, snake[i].yPos);
@@ -146,31 +151,6 @@ void processEvents(RenderWindow & window)
 		if (event.type == Event::Closed || ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::Escape) && state == ENDGAME))
 			window.close();
 	}
-	/*if (Keyboard::isKeyPressed(Keyboard::W) && snake[0].dir != 2)
-	{
-		snake[0].dir = 3;
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::S) && snake[0].dir != 3)
-	{
-		snake[0].dir = 2;
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::A) && snake[0].dir != 0)
-	{
-		snake[0].dir = 1;
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::D) && snake[0].dir != 1)
-	{
-		snake[0].dir = 0;
-	}
-
-	if (Keyboard::isKeyPressed(Keyboard::P))
-	{
-		pause = true;
-	}
-	if (Keyboard::isKeyPressed(Keyboard::U))
-	{
-		pause = false;
-	}*/
 }
 
 void headInit()
@@ -250,13 +230,13 @@ void processCollisions(int snakeDrawCounter)
 	if (apple->xPos == snake[0].xPos && apple->yPos == snake[0].yPos)
 	{
 		eatApple(snakeDrawCounter);
-		appleSpawn(snakeDrawCounter, *apple);
+		appleSpawn(snakeDrawCounter, apple);
 	}
 }
 
 void gameStart()
 {
-	RenderWindow window(VideoMode(380, 190), "Snake");
+	RenderWindow window(VideoMode(MAP_WIDTH * 19, MAP_HEIGHT * 19), "Snake");
 	Clock clock;
 	while (window.isOpen()) //разбить на 3 метода
 	{
@@ -295,7 +275,7 @@ void gameStart()
 
 				step();
 
-				int snakeDrawCounter = snakeLength();
+				int snakeDrawCounter = snakeLength(snake);
 
 				processCollisions(snakeDrawCounter);
 			}

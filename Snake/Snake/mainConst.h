@@ -1,11 +1,13 @@
 #pragma once
+#include "apple.h"
+#include "SnakeParts.h"
+#include "map.h"
 
 enum State { STARTGAME, PAUSE, ENDGAME, PLAY };
 
-Map * map = new Map();
-Apple *  apple = new Apple();
-SnakeParts * snake = new SnakeParts[50];
-
+Map * map;
+Apple *  apple;
+SnakeParts * snake;
 Font font;
 Text text("", font, 40);
 Text title("", font, 50);

@@ -1,9 +1,7 @@
 #pragma once
 #include "mapConst.h"
-
-struct Apple;
-
-
+#include <SFML/Graphics.hpp>
+using namespace sf;
 
 struct Apple
 {
@@ -12,25 +10,7 @@ struct Apple
 	Image image;
 	Texture texture;
 	Sprite sprite;
-
-	Apple()
-	{
-		draw();
-		sprite.setPosition(xPos, yPos);
-		image.loadFromFile("images/apple.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-		sprite.setTextureRect(IntRect(0, 0, 19, 19));
-	}
-
-	void draw()
-	{
-		xPos = (rand() % MAP_WIDTH) * 19.f;
-		yPos = (rand() % MAP_HEIGHT) * 19.f;
-		while (TileMap[(int)(yPos / 19)][(int)(xPos / 19)] != ' ')
-		{
-			xPos = (rand() % MAP_WIDTH) * 19.f;
-			yPos = (rand() % MAP_HEIGHT) * 19.f;
-		}
-	}
 };
+
+void appleInit(Apple * apple);
+void appleDraw(Apple * apple);
