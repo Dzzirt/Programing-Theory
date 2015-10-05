@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
+#define STEP 19;
+
 struct SnakeParts
 {
 	float xPos = 0.f, yPos = 0.f, xStore, yStore;

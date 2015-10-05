@@ -29,7 +29,7 @@ void snakeUpdate(SnakeParts * snake)
 
 void snakeInit(SnakeParts * snake)
 {
-	for (size_t i = 0; i < ; i++)
+	for (size_t i = 0; i < 50; i++)
 	{
 		(snake + i)->image.loadFromFile("images/snakePart.png");
 		(snake + i)->texture.loadFromImage((snake + i)->image);

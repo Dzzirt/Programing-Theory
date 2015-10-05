@@ -3,9 +3,6 @@
 
 int main()
 {
-	reinitAll();
-	textInit();
-	headInit();
 	gameStart();
 	return 0;
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include "methods.h"
-#include "mainConst.h"
 #include "sstream"
+#include "Game.h"
+#define HEAD snake[0]
+
 
 
 std::string toString(int val)
@@ -11,29 +13,75 @@ std::string toString(int val)
 	return oss.str();
 }
 
-void reinitAll()
+void newMap(Game * game)
 {
-	map = new Map();
-	mapInit(map);
-	apple = new Apple();
-	appleInit(apple);
-	snake = new SnakeParts[50];
-	snakeInit(snake);
-	headInit();
-	score = 0;
-	timeCounter = 0.f;
-	speed = 0.2f;
+	game->map = new Map();
+	mapInit(game->map);
+}
+void newApple(Game * game)
+{
+	game->apple = new Apple();
+	appleInit(game->apple);
+}
+void newSnake(Game * game)
+{
+	game->snake = new SnakeParts[50];
+	snakeInit(game->snake);
+	headInit(game->snake);
+}
+void newText(Game * game)
+{
+	game->gameText = new GameText;
+	textInit(game->gameText);
+}
+void initGame(Game * game)
+{
+	newApple(game);
+	newMap(game);
+	newSnake(game);
+	newText(game);
+	game->score = 0;
+	game->timeCounter = 0.f;
+	game->speed = 0.2f;
+	game->state = STARTGAME;
 }
 
-void deleteAll()
+void newGame(Game * &game)
 {
-	delete apple;
-	delete map;
+	game = new Game;
+	initGame(game);
+}
+
+void destroyGame(Game * game)
+{
+	destroyApple(game->apple);
+	destroyMap(game->map);
+	destroySnake(game->snake);
+	destroyText(game->gameText);
+	delete game;
+}
+void destroySnake(SnakeParts * snake)
+{
 	delete[] snake;
 }
-
-void appleSpawn(int snakeDrawCounter, Apple * apple)
+void destroyApple(Apple * apple)
 {
+	delete apple;
+}
+void destroyMap(Map * map)
+{
+	delete map;
+}
+void destroyText(GameText * text)
+{
+	delete text;
+}
+
+void appleSpawn(int snakeDrawCounter, Game * game)
+{
+	Apple * apple = game->apple;
+	SnakeParts * snake = game->snake;
+
 	bool safe = true;
 	do
 	{
@@ -53,10 +101,11 @@ void appleSpawn(int snakeDrawCounter, Apple * apple)
 	apple->sprite.setPosition(apple->xPos, apple->yPos);
 }
 
-void eatApple(int snakeDrawCounter)
+void eatApple(int snakeDrawCounter, Game * game)
 {
-	score += 9;
-	speed -= 0.005f;
+	SnakeParts * snake = game->snake;
+	game->score += 9;
+	game->speed -= 0.005f;
 	snake[snakeDrawCounter].draw = true;
 	snake[snakeDrawCounter].sprite.setPosition(snake[snakeDrawCounter - 1].xStore, snake[snakeDrawCounter - 1].yStore);
 }
@@ -74,29 +123,29 @@ int snakeLength(SnakeParts * snake)
 	return snakeDrawCounter;
 }
 
-void step()
+void step(SnakeParts * snake)
 {
 	storeXY(snake);
 
-	if ((snake[0].dir == 3) && (snake[0].yPos == 0))
+	if ((HEAD.dir == 3) && (HEAD.yPos == 0))
 	{
-		snake[0].yPos = (MAP_HEIGHT - 1) * 19;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+		HEAD.yPos = (MAP_HEIGHT - 1) * 19;
+		HEAD.sprite.setPosition(HEAD.xPos, HEAD.yPos);
 	}
-	else if (snake[0].dir == 2 && snake[0].yPos == (MAP_HEIGHT - 1) * 19)
+	else if (HEAD.dir == 2 && HEAD.yPos == (MAP_HEIGHT - 1) * 19)
 	{
-		snake[0].yPos = 0;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+		HEAD.yPos = 0;
+		HEAD.sprite.setPosition(HEAD.xPos, HEAD.yPos);
 	}
-	else if (snake[0].dir == 1 && snake[0].xPos == 0)
+	else if (HEAD.dir == 1 && HEAD.xPos == 0)
 	{
-		snake[0].xPos = (MAP_WIDTH - 1) * 19;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+		HEAD.xPos = (MAP_WIDTH - 1) * 19;
+		HEAD.sprite.setPosition(HEAD.xPos, HEAD.yPos);
 	}
-	else if (snake[0].dir == 0 && snake[0].xPos == (MAP_WIDTH - 1) * 19)
+	else if (HEAD.dir == 0 && HEAD.xPos == (MAP_WIDTH - 1) * 19)
 	{
-		snake[0].xPos = 0;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+		HEAD.xPos = 0;
+		HEAD.sprite.setPosition(HEAD.xPos, HEAD.yPos);
 	}
 	else snakeUpdate(snake);
 
@@ -112,65 +161,60 @@ void step()
 	}
 }
 
-void processEvents(RenderWindow & window)
+void processEvents(RenderWindow & window, Game * game)
 {
+	SnakeParts * snake = game->snake;
 	Event event;
 	while (window.pollEvent(event))
 	{
-		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::W) && snake[0].dir != 2)
+		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::W) && HEAD.dir != 2)
 		{
-			snake[0].dir = 3;
+			HEAD.dir = 3;
 		}
-		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::S) && snake[0].dir != 3)
+		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::S) && HEAD.dir != 3)
 		{
-			snake[0].dir = 2;
+			HEAD.dir = 2;
 		}
-		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::A) && snake[0].dir != 0)
+		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::A) && HEAD.dir != 0)
 		{
-			snake[0].dir = 1;
+			HEAD.dir = 1;
 		}
-		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::D) && snake[0].dir != 1)
+		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::D) && HEAD.dir != 1)
 		{
-			snake[0].dir = 0;
+			HEAD.dir = 0;
 		}
 
 		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::P))
 		{
-			state = PAUSE;
+			game->state = PAUSE;
 		}
 		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::U))
 		{
-			state = PLAY;
+			game->state = PLAY;
 		}
-		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::R) && state == ENDGAME)
+		if ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::R) && game->state == ENDGAME)
 		{
-			state = PLAY;
-			deleteAll();
-			reinitAll();
+			
+			game->state = RESTART;
 		}
-		if (event.type == Event::Closed || ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::Escape) && state == ENDGAME))
+		if (event.type == Event::Closed || ((event.type == Event::KeyPressed) && (event.key.code == Keyboard::Escape) && game->state == ENDGAME))
 			window.close();
 	}
 }
 
-void headInit()
+void headInit(SnakeParts * snake)
 {
-	snake[0].xPos = 190;
-	snake[0].yPos = 95;
-	snake[0].sprite.setPosition(190, 95);
-	snake[0].draw = true;
+	HEAD.xPos = 190;
+	HEAD.yPos = 95;
+	HEAD.sprite.setPosition(190, 95);
+	HEAD.draw = true;
 }
 
-void textInit()
+void render(RenderWindow & window, Game * game)
 {
-	font.loadFromFile("font/font.otf");
-	text.setColor(color);
-	title.setColor(color);
-	title.setStyle(Text::Bold);
-}
-
-void render(RenderWindow & window)
-{
+	SnakeParts * snake = game->snake;
+	Map * map = game->map;
+	Apple * apple = game->apple;
 	window.clear();
 
 	//Map draw
@@ -199,38 +243,37 @@ void render(RenderWindow & window)
 	window.draw(apple->sprite);
 }
 
-void processCollisions(int snakeDrawCounter)
+void processCollisions(int snakeDrawCounter, Game * game)
 {
+	SnakeParts * snake = game->snake;
+	Apple * apple = game->apple;
 	//Collision with Walls
 
-	try
+	
+	if (TileMap[(int)(HEAD.yPos / 19)][(int)(HEAD.xPos / 19)] == '1')
 	{
-		if (TileMap[(int)(snake[0].yPos / 19)][(int)(snake[0].xPos / 19)] == '1')
-		{
-			state = ENDGAME;
-		}
+		game->state = ENDGAME;
 	}
-	catch (...)
-	{
-	}
+	
+	
 
 	//Collision with itself
 
 	for (int i = 1; i < snakeDrawCounter; i++)
 	{
-		if (snake[i].xPos == snake[0].xPos && snake[i].yPos == snake[0].yPos)
+		if (snake[i].xPos == HEAD.xPos && snake[i].yPos == HEAD.yPos)
 		{
-			state = ENDGAME;
+			game->state = ENDGAME;
 		}
 	}
 
 
 	//Interact with Apple
 
-	if (apple->xPos == snake[0].xPos && apple->yPos == snake[0].yPos)
+	if (apple->xPos == HEAD.xPos && apple->yPos == HEAD.yPos)
 	{
-		eatApple(snakeDrawCounter);
-		appleSpawn(snakeDrawCounter, apple);
+		eatApple(snakeDrawCounter, game);
+		appleSpawn(snakeDrawCounter, game);
 	}
 }
 
@@ -238,61 +281,73 @@ void gameStart()
 {
 	RenderWindow window(VideoMode(MAP_WIDTH * 19, MAP_HEIGHT * 19), "Snake");
 	Clock clock;
+	Game * game;
+	newGame(game);
+	Text text = game->gameText->text;
+
 	while (window.isOpen()) //разбить на 3 метода
 	{
 		float time = clock.getElapsedTime().asSeconds();
 		clock.restart();
-		timeCounter += time;
+		game->timeCounter += time;
 
-		processEvents(window);
+		processEvents(window, game);
 
-		if (state == STARTGAME)
+		if (game->state == STARTGAME)
 		{
 			window.clear();
-			title.setString("       Snake!\nPress 'U' to start!");
-			title.setPosition(4, 10);
-			window.draw(title);
-
+			text.setCharacterSize(50);
+			text.setString("       Snake!\nPress 'U' to start!");
+			text.setPosition(4, 10);
+			window.draw(text);
 		}
 
-		if (state == PAUSE)
+		if (game->state == RESTART)
+		{
+			destroyGame(game);
+			newGame(game);
+			text = game->gameText->text;
+			game->state = PLAY;
+		}
+		if (game->state == PAUSE)
 		{
 			window.clear();
-			render(window);
-			title.setString("Pause");
-			title.setPosition(122, 50);
-			window.draw(title);
+			render(window, game);
+			text.setCharacterSize(50);
+			text.setString("Pause");
+			text.setPosition(122, 50);
+			window.draw(text);
 		
 		}
 
-		if (state == PLAY)
+		if (game->state == PLAY)
 		{
-			if (timeCounter > speed)
+			if (game->timeCounter > game->speed)
 			{
-				timeCounter = 0;
+				game->timeCounter = 0;
 
 				//Snake movement
 
-				step();
+				step(game->snake);
 
-				int snakeDrawCounter = snakeLength(snake);
+				int snakeDrawCounter = snakeLength(game->snake);
 
-				processCollisions(snakeDrawCounter);
+				processCollisions(snakeDrawCounter, game);
 			}
-			render(window);
+			render(window, game);
 			
 		}
 
-		if (state == ENDGAME)
+		if (game->state == ENDGAME)
 		{
 			window.clear();
-			text.setString(" Score: " + toString(score) + "\n Press 'Esc' to exit\n Press 'R' to restart");
+			text.setCharacterSize(40);
+			text.setString(" Score: " + toString(game->score) + "\n Press 'Esc' to exit\n Press 'R' to restart");
 			text.setPosition(14, 28);
 			window.draw(text);
-			
 		}
 
 		window.display();
 	}
-	deleteAll();
+	destroyGame(game);
 }
