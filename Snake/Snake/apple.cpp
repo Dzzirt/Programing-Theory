@@ -1,23 +1,20 @@
 #include "apple.h"
 
 
-void appleInit(Apple * apple)
-{
-	appleDraw(apple);
-	apple->sprite.setPosition(apple->xPos, apple->yPos);
+void AppleInit(Apple* apple) {
+	AppleDraw(apple);
+	apple->sprite.setPosition(apple->x_pos, apple->y_pos);
 	apple->image.loadFromFile("images/apple.png");
 	apple->texture.loadFromImage(apple->image);
 	apple->sprite.setTexture(apple->texture);
-	apple->sprite.setTextureRect(IntRect(0, 0, 19, 19));
+	apple->sprite.setTextureRect(IntRect(0, 0, SpriteSize, SpriteSize));
 }
 
-void appleDraw(Apple * apple)
-{
-	apple->xPos = (rand() % MAP_WIDTH) * 19.f;
-	apple->yPos = (rand() % MAP_HEIGHT) * 19.f;
-	while (TileMap[(int)(apple->yPos / 19)][(int)(apple->xPos / 19)] != ' ')
-	{
-		apple->xPos = (rand() % MAP_WIDTH) * 19.f;
-		apple->yPos = (rand() % MAP_HEIGHT) * 19.f;
+void AppleDraw(Apple* apple) {
+	apple->x_pos = (rand() % MapWidth) * (float)SpriteSize;
+	apple->y_pos = (rand() % MapHeight) * (float)SpriteSize;
+	while (TileMap[(int)(apple->y_pos / SpriteSize)][(int)(apple->x_pos / SpriteSize)] != ' ') {
+		apple->x_pos = (rand() % MapWidth) * (float)SpriteSize;
+		apple->y_pos = (rand() % MapHeight) * (float)SpriteSize;
 	}
 }

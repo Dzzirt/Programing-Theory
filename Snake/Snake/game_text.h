@@ -2,11 +2,10 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-struct GameText
-{
+struct GameText {
 	Font font;
 	Text text;
 	Color color;
 };
 
-void textInit(GameText * text);
+void TextInit(GameText* text);

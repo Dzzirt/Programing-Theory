@@ -2,11 +2,10 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-struct Map
-{
+struct Map {
 	Image image;
 	Texture texture;
 	Sprite sprite;
 };
 
-void mapInit(Map * map);
+void MapInit(Map* map);

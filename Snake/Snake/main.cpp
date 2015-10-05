@@ -1,10 +1,7 @@
 #include "methods.h"
 
 
-int main()
-{
-	gameStart();
+int main() {
+	GameStart();
 	return 0;
 }
-
-

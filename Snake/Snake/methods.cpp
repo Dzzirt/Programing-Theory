@@ -2,203 +2,202 @@
 #include "methods.h"
 #include "sstream"
 #include "Game.h"
-#include "mainConst.h"
+#include "main_fields.h"
 
 
 //Так и не разобрался как заменить имя snake[0] на что то более понятное
 
-std::string toString(int val) {
+std::string ToString(int val) {
 	std::ostringstream oss;
 	oss << val;
 	return oss.str();
 }
 
-void newMap(Game* game) {
+void NewMap(Game* game) {
 	game->map = new Map();
-	mapInit(game->map);
+	MapInit(game->map);
 }
 
-void newApple(Game* game) {
+void NewApple(Game* game) {
 	game->apple = new Apple();
-	appleInit(game->apple);
+	AppleInit(game->apple);
 }
 
-void newSnake(Game* game) {
-	game->snake = new SnakeParts[maxLengthSnake];
-	snakeInit(game->snake);
-	headInit(game->snake);
+void NewSnake(Game* game) {
+	game->snake = new SnakeParts[MaxLengthSnake];
+	SnakeInit(game->snake);
+	HeadInit(game->snake);
 }
 
-void newText(Game* game) {
-	game->gameText = new GameText;
-	textInit(game->gameText);
+void NewText(Game* game) {
+	game->game_text = new GameText;
+	TextInit(game->game_text);
 }
 
-void newConsts(Game* game) {
-	game->consts = new mainConst;
-	constsInit(game->consts);
+void NewConsts(Game* game) {
+	game->consts = new MainConst;
+	ConstsInit(game->consts);
 }
 
-void initGame(Game* game) {
-	newApple(game);
-	newMap(game);
-	newSnake(game);
-	newText(game);
-	newConsts(game);
+void InitGame(Game* game) {
+	NewApple(game);
+	NewMap(game);
+	NewSnake(game);
+	NewText(game);
+	NewConsts(game);
 	game->state = STARTGAME;
 }
 
-void newGame(Game* & game) // 
+void NewGame(Game* & game) // 
 {
 	game = new Game();
-	initGame(game);
+	InitGame(game);
 }
 
-void destroyGame(Game* game) {
-	destroyApple(game->apple);
-	destroyMap(game->map);
-	destroySnake(game->snake);
-	destroyText(game->gameText);
-	destroyConsts(game->consts);
+void DestroyGame(Game* game) {
+	DestroyApple(game->apple);
+	DestroyMap(game->map);
+	DestroySnake(game->snake);
+	DestroyText(game->game_text);
+	DestroyConsts(game->consts);
 	delete game;
 }
 
-void destroySnake(SnakeParts* snake) {
+void DestroySnake(SnakeParts* snake) {
 	delete[] snake;
 }
 
-void destroyApple(Apple* apple) {
+void DestroyApple(Apple* apple) {
 	delete apple;
 }
 
-void destroyMap(Map* map) {
+void DestroyMap(Map* map) {
 	delete map;
 }
 
-void destroyText(GameText* text) {
+void DestroyText(GameText* text) {
 	delete text;
 }
 
-void destroyConsts(mainConst* consts) {
+void DestroyConsts(MainConst* consts) {
 	delete consts;
 }
 
-void appleSpawn(int snakeDrawCounter, Game* game) {
+void AppleSpawn(int snake_draw_counter, Game* game) {
 	Apple* apple = game->apple;
 	SnakeParts* snake = game->snake;
 
 	bool safe = false;
 
 	while (safe != true) {
-		appleDraw(apple);
-		for (int i = 0; i < snakeDrawCounter; i++) {
-			if (snake[i].xPos == apple->xPos && snake[i].yPos == apple->yPos) {
+		AppleDraw(apple);
+		for (int i = 0; i < snake_draw_counter; i++) {
+			if (snake[i].x_pos == apple->x_pos && snake[i].y_pos == apple->y_pos) {
 				safe = false;
 				break;
 			}
 			safe = true;
 		}
 	}
-	apple->sprite.setPosition(apple->xPos, apple->yPos);
+	apple->sprite.setPosition(apple->x_pos, apple->y_pos);
 }
 
-void eatApple(int snakeDrawCounter, Game* game) {
+void EatApple(int snake_draw_counter, Game* game) {
 	SnakeParts* snake = game->snake;
-	mainConst* consts = game->consts;
-	float prevPartX = snake[snakeDrawCounter - 1].xStore;
-	float prevPartY = snake[snakeDrawCounter - 1].yStore;
+	MainConst* consts = game->consts;
+	float prev_part_x = snake[snake_draw_counter - 1].x_store;
+	float prev_part_y = snake[snake_draw_counter - 1].y_store;
 
-	consts->score += 9;
-	consts->speed -= 0.005f;
-	snake[snakeDrawCounter].draw = true;
-	snake[snakeDrawCounter].sprite.setPosition(prevPartX, prevPartY);
+	consts->score += ScorePerApple;
+	consts->speed -= SpeedIncreasePerApple;
+	snake[snake_draw_counter].draw = true;
+	snake[snake_draw_counter].sprite.setPosition(prev_part_x, prev_part_y);
 }
 
-int snakeLength(SnakeParts* snake) {
-	int snakeDrawCounter = 0;
-	for (int i = 0; i < maxLengthSnake; i++) {
+int SnakeLength(SnakeParts* snake) {
+	int snake_draw_counter = 0;
+	for (int i = 0; i < MaxLengthSnake; i++) {
 		if (snake[i].draw == true) {
-			snakeDrawCounter++;
+			snake_draw_counter++;
 		}
 	}
-	return snakeDrawCounter;
+	return snake_draw_counter;
 }
 
-void step(SnakeParts* snake) {
-	storeXY(snake);
-	if ((snake[0].dir == 3) && (snake[0].yPos == 0)) {
-		snake[0].yPos = (MAP_HEIGHT - 1) * spriteSize;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+void Step(SnakeParts* snake) {
+	StoreXY(snake);
+	if ((snake[0].dir == UP) && (snake[0].y_pos == 0)) {
+		snake[0].y_pos = (MapHeight - 1) * SpriteSize;
+		snake[0].sprite.setPosition(snake[0].x_pos, snake[0].y_pos);
 	}
-	else if (snake[0].dir == 2 && snake[0].yPos == (MAP_HEIGHT - 1) * spriteSize) {
-		snake[0].yPos = 0;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+	else if (snake[0].dir == DOWN && snake[0].y_pos == (MapHeight - 1) * SpriteSize) {
+		snake[0].y_pos = 0;
+		snake[0].sprite.setPosition(snake[0].x_pos, snake[0].y_pos);
 	}
-	else if (snake[0].dir == 1 && snake[0].xPos == 0) {
-		snake[0].xPos = (MAP_WIDTH - 1) * spriteSize;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+	else if (snake[0].dir == RIGHT && snake[0].x_pos == 0) {
+		snake[0].x_pos = (MapWidth - 1) * SpriteSize;
+		snake[0].sprite.setPosition(snake[0].x_pos, snake[0].y_pos);
 	}
-	else if (snake[0].dir == 0 && snake[0].xPos == (MAP_WIDTH - 1) * spriteSize) {
-		snake[0].xPos = 0;
-		snake[0].sprite.setPosition(snake[0].xPos, snake[0].yPos);
+	else if (snake[0].dir == LEFT && snake[0].x_pos == (MapWidth - 1) * SpriteSize) {
+		snake[0].x_pos = 0;
+		snake[0].sprite.setPosition(snake[0].x_pos, snake[0].y_pos);
 	}
-	else snakeUpdate(snake);
+	else SnakeUpdate(snake);
 
-	for (int i = 1; i < maxLengthSnake; i++) {
+	for (int i = 1; i < MaxLengthSnake; i++) {
 		if (snake[i].draw == 1) {
-			storeXY(snake + i);
-			snake[i].xPos = snake[i - 1].xStore;
-			snake[i].yPos = snake[i - 1].yStore;
-			snake[i].sprite.setPosition(snake[i].xPos, snake[i].yPos);
+			StoreXY(snake + i);
+			snake[i].x_pos = snake[i - 1].x_store;
+			snake[i].y_pos = snake[i - 1].y_store;
+			snake[i].sprite.setPosition(snake[i].x_pos, snake[i].y_pos);
 		}
 	}
 }
 
-void processEvents(RenderWindow& window, Game* game) {
+void ProcessEvents(RenderWindow& window, Game* game) {
 	SnakeParts* snake = game->snake;
 	Event event;
 
-
 	while (window.pollEvent(event)) {
-		Keyboard::Key PRESSED;
+		Keyboard::Key pressed;
 		if (event.type == Event::KeyPressed) {
-			PRESSED = event.key.code;
+			pressed = event.key.code;
 
-			if ((PRESSED == Keyboard::W) && snake[0].dir != DOWN) {
+			if ((pressed == Keyboard::W) && snake[0].dir != DOWN) {
 				snake[0].dir = UP;
 			}
-			else if ((PRESSED == Keyboard::S) && snake[0].dir != UP) {
+			else if ((pressed == Keyboard::S) && snake[0].dir != UP) {
 				snake[0].dir = DOWN;
 			}
-			else if ((PRESSED == Keyboard::A) && snake[0].dir != LEFT) {
+			else if ((pressed == Keyboard::A) && snake[0].dir != LEFT) {
 				snake[0].dir = RIGHT;
 			}
-			else if ((PRESSED == Keyboard::D) && snake[0].dir != RIGHT) {
+			else if ((pressed == Keyboard::D) && snake[0].dir != RIGHT) {
 				snake[0].dir = LEFT;
 			}
-			else if ((PRESSED == Keyboard::P)) {
+			else if ((pressed == Keyboard::P)) {
 				game->state = PAUSE;
 			}
-			else if ((PRESSED == Keyboard::U)) {
+			else if ((pressed == Keyboard::U)) {
 				game->state = PLAY;
 			}
-			else if ((PRESSED == Keyboard::R) && game->state == ENDGAME) {
+			else if ((pressed == Keyboard::R) && game->state == ENDGAME) {
 				game->state = RESTART;
 			}
 		}
-		if (event.type == Event::Closed || ((event.type == Event::KeyPressed) && (PRESSED == Keyboard::Escape) && game->state == ENDGAME))
+		if (event.type == Event::Closed || ((event.type == Event::KeyPressed) && (pressed == Keyboard::Escape) && game->state == ENDGAME))
 			window.close();
 	}
 }
 
-void headInit(SnakeParts* snake) {
-	snake[0].xPos = 190;
-	snake[0].yPos = 95;
+void HeadInit(SnakeParts* snake) {
+	snake[0].x_pos = 190;
+	snake[0].y_pos = 95;
 	snake[0].sprite.setPosition(190, 95);
 	snake[0].draw = true;
 }
 
-void render(RenderWindow& window, Game* game) {
+void Render(RenderWindow& window, Game* game) {
 	SnakeParts* snake = game->snake;
 	Map* map = game->map;
 	Apple* apple = game->apple;
@@ -206,19 +205,19 @@ void render(RenderWindow& window, Game* game) {
 
 	//Map draw
 
-	IntRect earth = IntRect(0, 0, spriteSize, spriteSize);
-	IntRect wall = IntRect(spriteSize, 0, spriteSize, spriteSize);
-	for (int i = 0; i < MAP_HEIGHT; i++)
-		for (int j = 0; j < MAP_WIDTH; j++) {
+	IntRect earth = IntRect(0, 0, SpriteSize, SpriteSize);
+	IntRect wall = IntRect(SpriteSize, 0, SpriteSize, SpriteSize);
+	for (int i = 0; i < MapHeight; i++)
+		for (int j = 0; j < MapWidth; j++) {
 			if (TileMap[i][j] == ' ') map->sprite.setTextureRect(earth);
 			if (TileMap[i][j] == '1') map->sprite.setTextureRect(wall);
-			map->sprite.setPosition((float)(j * spriteSize), (float)(i * spriteSize));
+			map->sprite.setPosition((float)(j * SpriteSize), (float)(i * SpriteSize));
 			window.draw(map->sprite);
 		}
 
 	//Snake draw
 
-	for (int i = 0; i < maxLengthSnake; ++i) {
+	for (int i = 0; i < MaxLengthSnake; ++i) {
 		if (snake[i].draw == true) {
 			window.draw(snake[i].sprite);
 		}
@@ -229,14 +228,14 @@ void render(RenderWindow& window, Game* game) {
 	window.draw(apple->sprite);
 }
 
-void processCollisions(int snakeDrawCounter, Game* game) {
+void ProcessCollisions(int snake_draw_counter, Game* game) {
 	SnakeParts* snake = game->snake;
 	Apple* apple = game->apple;
 
 	//Collision with Walls
 
-	float X = snake[0].yPos / spriteSize;
-	float Y = snake[0].xPos / spriteSize;
+	float X = snake[0].y_pos / SpriteSize;
+	float Y = snake[0].x_pos / SpriteSize;
 	if (TileMap[(int)(X)][(int)(Y)] == '1') {
 		game->state = ENDGAME;
 	}
@@ -244,8 +243,8 @@ void processCollisions(int snakeDrawCounter, Game* game) {
 
 	//Collision with itself
 
-	for (int i = 1; i < snakeDrawCounter; i++) {
-		if ((snake[i].xPos == snake[0].xPos) && (snake[i].yPos == snake[0].yPos)) {
+	for (int i = 1; i < snake_draw_counter; i++) {
+		if ((snake[i].x_pos == snake[0].x_pos) && (snake[i].y_pos == snake[0].y_pos)) {
 			game->state = ENDGAME;
 		}
 	}
@@ -253,26 +252,26 @@ void processCollisions(int snakeDrawCounter, Game* game) {
 
 	//Interact with Apple
 
-	if ((apple->xPos == snake[0].xPos) && (apple->yPos == snake[0].yPos)) {
-		eatApple(snakeDrawCounter, game);
-		appleSpawn(snakeDrawCounter, game);
+	if ((apple->x_pos == snake[0].x_pos) && (apple->y_pos == snake[0].y_pos)) {
+		EatApple(snake_draw_counter, game);
+		AppleSpawn(snake_draw_counter, game);
 	}
 }
 
-void gameStart() {
-	RenderWindow window(VideoMode(MAP_WIDTH * spriteSize, MAP_HEIGHT * spriteSize), "Snake");
+void GameStart() {
+	RenderWindow window(VideoMode(MapWidth * SpriteSize, MapHeight * SpriteSize), "Snake");
 	Clock clock;
 	Game* game;
-	newGame(game);
-	Text text = game->gameText->text;
+	NewGame(game);
+	Text text = game->game_text->text;
 
 	while (window.isOpen()) //разбить на 3 метода
 	{
 		float time = clock.getElapsedTime().asSeconds();
 		clock.restart();
-		game->consts->timeCounter += time;
+		game->consts->time_counter += time;
 
-		processEvents(window, game);
+		ProcessEvents(window, game);
 
 		if (game->state == STARTGAME) {
 			window.clear();
@@ -282,42 +281,42 @@ void gameStart() {
 			window.draw(text);
 		}
 		else if (game->state == RESTART) {
-			destroyGame(game);
-			newGame(game);
-			text = game->gameText->text;
+			DestroyGame(game);
+			NewGame(game);
+			text = game->game_text->text;
 			game->state = PLAY;
 		}
 		else if (game->state == PAUSE) {
 			window.clear();
-			render(window, game);
+			Render(window, game);
 			text.setCharacterSize(150);
 			text.setString("Pause");
 			text.setPosition(455, 160);
 			window.draw(text);
 		}
 		else if (game->state == PLAY) {
-			while (game->consts->timeCounter > game->consts->speed) {
-				game->consts->timeCounter = 0;
+			while (game->consts->time_counter > game->consts->speed) {
+				game->consts->time_counter = 0;
 
 				//Snake movement
 
-				step(game->snake);
+				Step(game->snake);
 
-				int snakeDrawCounter = snakeLength(game->snake);
+				int snake_draw_counter = SnakeLength(game->snake);
 
-				processCollisions(snakeDrawCounter, game);
+				ProcessCollisions(snake_draw_counter, game);
 			}
-			render(window, game);
+			Render(window, game);
 		}
 		else if (game->state == ENDGAME) {
 			window.clear();
 			text.setCharacterSize(120);
-			text.setString("        Score: " + toString(game->consts->score) + "\n Press 'Esc' to exit\n Press 'R' to restart");
+			text.setString("       Score: " + ToString(game->consts->score) + "\n Press 'Esc' to exit\n Press 'R' to restart");
 			text.setPosition(170, 28);
 			window.draw(text);
 		}
 
 		window.display();
 	}
-	destroyGame(game);
+	DestroyGame(game);
 }

@@ -1,31 +1,37 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "apple.h"
-#include "SnakeParts.h"
+#include "snake_parts.h"
 #include "map.h"
 #include "Game.h"
 
-enum Dir {LEFT, RIGHT, DOWN, UP};
-void newConsts(Game * game);
-void gameStart();
-void newApple(Game * game);
-void initGame(Game * game);
-void newSnake(Game * game);
-void newMap(Game * game);
-void newText(Game * game);
-void newGame(Game * &game);
-void headInit(SnakeParts * snake);
-void processEvents(RenderWindow & window, Game * game);
-int snakeLength(SnakeParts * snake);
-void processCollisions(int snakeDrawCounter, Game * game);
-void step(SnakeParts * snake);
-void eatApple(int snakeDrawCounter, Game * game);
-void appleSpawn(int snakeDrawCounter, Game * game);
-void render(sf::RenderWindow & window, Game * game);
-std::string toString(int val);
-void destroyGame(Game * game);
-void destroySnake(SnakeParts * snake);
-void destroyMap(Map * map);
-void destroyApple(Apple * apple);
-void destroyText(GameText * text);
-void destroyConsts(mainConst * consts);
+enum Dir {
+	LEFT,
+	RIGHT,
+	DOWN,
+	UP
+};
+
+void NewConsts(Game* game);
+void GameStart();
+void NewApple(Game* game);
+void InitGame(Game* game);
+void NewSnake(Game* game);
+void NewMap(Game* game);
+void NewText(Game* game);
+void NewGame(Game* & game);
+void HeadInit(SnakeParts* snake);
+void ProcessEvents(RenderWindow& window, Game* game);
+int SnakeLength(SnakeParts* snake);
+void ProcessCollisions(int snake_draw_counter, Game* game);
+void Step(SnakeParts* snake);
+void EatApple(int snake_draw_counter, Game* game);
+void AppleSpawn(int snake_draw_counter, Game* game);
+void Render(RenderWindow& window, Game* game);
+std::string ToString(int val);
+void DestroyGame(Game* game);
+void DestroySnake(SnakeParts* snake);
+void DestroyMap(Map* map);
+void DestroyApple(Apple* apple);
+void DestroyText(GameText* text);
+void DestroyConsts(MainConst* consts);

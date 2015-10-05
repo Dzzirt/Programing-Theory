@@ -1,16 +1,15 @@
 #pragma once
-#include "mainConst.h"
+#include "main_fields.h"
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-struct Apple
-{
-	float xPos, yPos;
-	String fileName;
+struct Apple {
+	float x_pos, y_pos;
+	String file_name;
 	Image image;
 	Texture texture;
 	Sprite sprite;
 };
 
-void appleInit(Apple * apple);
-void appleDraw(Apple * apple);
+void AppleInit(Apple* apple);
+void AppleDraw(Apple* apple);

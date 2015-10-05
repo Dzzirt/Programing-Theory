@@ -1,12 +1,14 @@
 #pragma once
 #include <SFML/System/String.hpp>
 
-const int MAP_HEIGHT = 30;
-const int MAP_WIDTH = 70;
-const int spriteSize = 19;
-const int maxLengthSnake = 60;
+const int MapHeight = 30;
+const int MapWidth = 70;
+const int SpriteSize = 19;
+const int MaxLengthSnake = 60;
+const int ScorePerApple = 9;
+const float SpeedIncreasePerApple = 0.005f;
 
-const sf::String TileMap[MAP_HEIGHT] = {
+const sf::String TileMap[MapHeight] = {
 
 	"     11111     11111     11111     11111     11111      11111         ",
 	"                                                                      ",
@@ -15,21 +17,21 @@ const sf::String TileMap[MAP_HEIGHT] = {
 	"1                 1               1               1                  1",
 	"1                                 1                                  1",
 	"1                                 1                                  1",
-	"1                                                                    1",
+	"1              1111                               1111               1",
 	"1                                 1                                  1",
 	"1                                 1                                  1",
 	"1                 1               1               1                  1",
 	"1                                 1                                  1",
-	"                                                                      ",
-	"                                                                      ",
-	"                            1 1 1 1 1 1 1                             ",
-	"                                                                      ",
-	"                                                                      ",
+	"         1                                                 1          ",
+	"         1                                                 1          ",
+	"         1                  1 1 1 1 1 1 1                  1          ",
+	"         1                                                 1          ",
+	"         1                                                 1          ",
 	"1                                 1                                  1",
 	"1                 1               1               1                  1",
 	"1                                 1                                  1",
 	"1                                 1                                  1",
-	"1                                                                    1",
+	"1              1111                               1111               1",
 	"1                                 1                                  1",
 	"1                                 1                                  1",
 	"1                 1               1               1                  1",
@@ -40,10 +42,9 @@ const sf::String TileMap[MAP_HEIGHT] = {
 	"     11111     11111     11111     11111     11111      11111         "
 };
 
-struct mainConst
-{
+struct MainConst {
 	int score;
-	float timeCounter, speed;
+	float time_counter, speed;
 };
 
-void constsInit(mainConst * consts);
+void ConstsInit(MainConst* consts);
