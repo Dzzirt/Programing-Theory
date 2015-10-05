@@ -3,6 +3,7 @@
 #include "SnakeParts.h"
 #include "apple.h"
 #include "GameText.h"
+
 enum State { STARTGAME, PAUSE, ENDGAME, PLAY, RESTART };
 
 struct Game
@@ -11,8 +12,8 @@ struct Game
 	Apple *  apple;
 	SnakeParts * snake;
 	GameText * gameText;
+	mainConst * consts;
 	State state;
 
-	int score;
-	float timeCounter, speed;
+	
 };

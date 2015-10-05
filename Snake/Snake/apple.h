@@ -1,5 +1,5 @@
 #pragma once
-#include "mapConst.h"
+#include "mainConst.h"
 #include <SFML/Graphics.hpp>
 using namespace sf;
 

@@ -5,6 +5,8 @@
 #include "map.h"
 #include "Game.h"
 
+enum Dir {LEFT, RIGHT, DOWN, UP};
+void newConsts(Game * game);
 void gameStart();
 void newApple(Game * game);
 void initGame(Game * game);
@@ -26,3 +28,4 @@ void destroySnake(SnakeParts * snake);
 void destroyMap(Map * map);
 void destroyApple(Apple * apple);
 void destroyText(GameText * text);
+void destroyConsts(mainConst * consts);
