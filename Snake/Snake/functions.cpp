@@ -1,5 +1,5 @@
 #pragma once
-#include "methods.h"
+#include "functions.h"
 #include "sstream"
 #include "Game.h"
 #include "main_fields.h"

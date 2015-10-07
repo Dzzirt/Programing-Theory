@@ -1,5 +1,4 @@
 #pragma once
-#include "main_fields.h"
 #include <SFML/Graphics.hpp>
 using namespace sf;
 

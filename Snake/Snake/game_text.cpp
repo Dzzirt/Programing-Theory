@@ -7,5 +7,4 @@ void TextInit(GameText* game_text) {
 	game_text->color.g = 89;
 	game_text->color.b = 182;
 	game_text->text.setColor(game_text->color);
-
 }

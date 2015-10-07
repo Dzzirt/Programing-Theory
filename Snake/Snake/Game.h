@@ -3,6 +3,8 @@
 #include "snake_parts.h"
 #include "apple.h"
 #include "game_text.h"
+#include "main_fields.h"
+
 
 enum State {
 	STARTGAME,

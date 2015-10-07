@@ -1,11 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-using namespace sf;
 
 struct GameText {
-	Font font;
-	Text text;
-	Color color;
+	sf::Font font;
+	sf::Text text;
+	sf::Color color;
 };
 
 void TextInit(GameText* text);

@@ -1,5 +1,6 @@
 #include "snake_parts.h"
 #include "main_fields.h"
+
 void StoreXY(SnakeParts* snake) {
 	snake->x_store = snake->x_pos;
 	snake->y_store = snake->y_pos;

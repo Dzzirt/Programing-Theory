@@ -1,5 +1,5 @@
 #include "apple.h"
-
+#include  "main_fields.h"
 
 void AppleInit(Apple* apple) {
 	AppleDraw(apple);
