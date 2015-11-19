@@ -1,0 +1,7 @@
+#include "arrow.cpp"
+#include "directory.cpp"
+#include "image_manager.cpp"
+#include "manager_window.cpp"
+#include "message.cpp"
+#include "visual_components.cpp"
+#include "zoom_buttons.cpp"

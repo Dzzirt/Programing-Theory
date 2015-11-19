@@ -4,9 +4,12 @@
 struct ManagerWindow {
 	sf::RenderWindow * window;
 	bool is_win_resized;
-	float scale_x;
-	float scale_y;
-
+	sf::Vector2f win_scale;
+	bool drag_and_drop;
+	float zoom;
+	sf::Vector2f last_pos_before_click;
+	sf::Vector2f drag;
+	sf::Vector2f last_drag;
 };
 
 void WindowInit(ManagerWindow & man_window);

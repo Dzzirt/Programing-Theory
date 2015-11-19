@@ -19,16 +19,20 @@ struct ImageManager {
 
 void ManagerInit(ImageManager & manager, char*& arg);
 
-void Update(ImageManager& manager, sf::RenderWindow& window);
+void Update(ImageManager& manager);
 
-void Render(sf::RenderWindow& window, ImageManager manager);
+void Render(ImageManager& manager);
 
-void ProcessEvents(sf::RenderWindow& window, ImageManager& manager);
+void ProcessEvents(ImageManager& manager);
 
 void ChangeImage(Directory & dir, VisualComponents & visual);
 
 void InterractWithArrow(ImageManager & manager, bool clicked);
 
-void ArrowUpdate(ManagerWindow & man_window, VisualComponents & visual);
+void InterractWithZoom(ManagerWindow & man_window, ZoomButtons & zoom, bool clicked);
 
 void DestroyManager(ImageManager *& manager);
+
+void MovePicture(VisualComponents & visual, ManagerWindow & man_window);
+
+void CheckCollisionWithBorders(VisualComponents & visual, ManagerWindow & man_window);
