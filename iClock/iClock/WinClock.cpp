@@ -35,14 +35,15 @@ RectangleShape* CreateLabels()
 	RectangleShape* shapes = new RectangleShape[LabelsCount];
 	for (size_t i = 0; i < LabelsCount; ++i)
 	{
+		RectangleShape& label = *(shapes + i);
 		size_t angle = LabelStepInDegree * i + 90;
 		double x = (WindowWidth / 2.f) + MainCircleRadius * cos(i * LabelStepInDegree * M_PI / 180);
 		double y = WindowWidth / 2.f + MainCircleRadius * sin(i * LabelStepInDegree * M_PI / 180);
-		(shapes + i)->setPosition(float(x), float(y));
-		(shapes + i)->setFillColor(Color::Black);
-		(shapes + i)->setOrigin(LabelWidth / 2.f, 0);
-		(shapes + i)->setSize(Vector2f(LabelWidth, LabelHeight));
-		(shapes + i)->setRotation(float(angle));
+		label.setPosition(float(x), float(y));
+		label.setFillColor(Color::Black);
+		label.setOrigin(LabelWidth / 2.f, 0);
+		label.setSize(Vector2f(LabelWidth, LabelHeight));
+		label.setRotation(float(angle));
 	}
 	return shapes;
 }
@@ -127,4 +128,19 @@ void Render(WinClock& win_clock)
 		win_clock.window->draw(*(win_clock.labels + i));
 	}
 	win_clock.window->display();
+}
+
+
+void DestroyLabels(sf::RectangleShape& labels) {
+	delete[] & labels;
+}
+
+void DestroyClockWindow(sf::RenderWindow& window) {
+	delete &window;
+}
+
+void DestroyWinClock(WinClock& win_clock) {
+	DestroyLabels(*win_clock.labels);
+	DestroyClockWindow(*win_clock.window);
+	delete &win_clock;
 }

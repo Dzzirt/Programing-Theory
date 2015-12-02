@@ -19,12 +19,13 @@ int main()
 		ProcessEvents(*winClock->window);
 		timeSinceLastUpdate += clock.restart();
 		while (timeSinceLastUpdate > TimePerFrame)
-		{
+		{ 
 			ProcessEvents(*winClock->window);
 			Update(*winClock);
 			timeSinceLastUpdate -= TimePerFrame;
 		}
 		Render(*winClock);
 	}
+	DestroyWinClock(*winClock);
 	return 0;
 }

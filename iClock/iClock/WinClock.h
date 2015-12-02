@@ -39,3 +39,9 @@ void ProcessEvents(sf::RenderWindow& window);
 void Render(WinClock& win_clock);
 
 void Update(WinClock& win_clock);
+
+void DestroyLabels(sf::RectangleShape & labels);
+
+void DestroyClockWindow(sf::RenderWindow & window);
+
+void DestroyWinClock(WinClock & win_clock);
