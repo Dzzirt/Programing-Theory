@@ -13,7 +13,6 @@ struct SCustomButton
 		Normal,
 		Hovered,
 		Pressed,
-		Released
 	};
 
 	void Init(SAssets &assets, std::string const& title);
@@ -31,7 +30,7 @@ struct SCustomButton
     sf::RectangleShape shape;
     sf::Text text;
 		sf::Sprite mark;
-		float isMarkDraw;
+		bool isMarkDraw;
 		std::function<void(bool checked)> handler;
 	State state;
 };

@@ -34,10 +34,7 @@ void SApplication::Exec()
 		sf::Event event;
         while (window.pollEvent(event))
         {
-					if (buttonExample.OnEvent(event)) {
-						buttonExample.isMarkDraw = !buttonExample.isMarkDraw;
-						buttonExample.handler(buttonExample.isChecked());
-					}
+					buttonExample.OnEvent(event);
 
             switch (event.type)
 			{
@@ -48,7 +45,7 @@ void SApplication::Exec()
 				break;
             }
 		}
-		window.clear(sf::Color::Black);
+		window.clear(sf::Color::White);
 		buttonExample.Draw(window);
         window.display();
 	}

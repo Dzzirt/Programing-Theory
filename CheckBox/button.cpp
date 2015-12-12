@@ -21,7 +21,7 @@ const float BORDER_WIDTH = 3.f;
 
 void SCustomButton::Init(SAssets& assets, const std::string& title)
 {
-	mark.setTexture(assets.martTexture);
+	mark.setTexture(assets.markTexture);
 	isMarkDraw = false;
 	shape.setOutlineThickness(BORDER_WIDTH);
 	SetSize(CUSTOM_BUTTON_SIZE);
@@ -51,7 +51,6 @@ void SCustomButton::SetPosition(const Vector2f& point)
 
 void SCustomButton::Draw(RenderWindow& window)
 {
-	window.clear(Color::White);
 	FloatRect markBounds = mark.getLocalBounds();
 	mark.setOrigin(0.5f * markBounds.width, 0.5f * markBounds.height);
 	mark.setPosition(shape.getPosition() + 0.5f * shape.getSize());
@@ -63,14 +62,6 @@ void SCustomButton::Draw(RenderWindow& window)
 
 
 	window.draw(text);
-}
-
-bool SCustomButton::isChecked()
-{
-	if (isMarkDraw) {
-		return true;
-	}
-	return false;
 }
 
 bool SCustomButton::OnEvent(const Event& event)
@@ -100,6 +91,7 @@ bool SCustomButton::OnEvent(const Event& event)
 	case sf::Event::MouseButtonReleased:
 		if (state == State::Pressed)
 		{
+			isMarkDraw = !isMarkDraw;
 			SetState(mouseButtonHits() ? State::Hovered : State::Normal);
 			return true;
 		}
@@ -110,7 +102,6 @@ bool SCustomButton::OnEvent(const Event& event)
 	default:
 		break;
 	}
-
 	return false;
 }
 
@@ -123,10 +114,17 @@ void SCustomButton::SetState(SCustomButton::State newState)
 	case State::Normal:
 		shape.setFillColor(BACK_COLOR_NORMAL);
 		shape.setOutlineColor(BORDER_COLOR_NORMAL);
+		if (handler) {
+			handler(isMarkDraw);
+		}
+
 		break;
 	case State::Hovered:
 		shape.setFillColor(BACK_COLOR_HOVERED);
 		shape.setOutlineColor(BORDER_COLOR_HOVERED);
+		if (handler) {
+			handler(isMarkDraw);
+		}
 		break;
 	case State::Pressed:
 		shape.setFillColor(BACK_COLOR_PRESSED);

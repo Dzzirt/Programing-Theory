@@ -11,6 +11,6 @@ static const char FONT_UBUNTU_TTF[] = "../fonts/Ubuntu-R.ttf";
 struct SAssets
 {
 	sf::Font fontMain;
-	sf::Texture martTexture;
+	sf::Texture markTexture;
 	void Init();
 };
